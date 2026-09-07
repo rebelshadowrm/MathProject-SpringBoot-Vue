@@ -10,6 +10,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +22,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final TemporaryPasswordFilter temporaryPasswordFilter;
 
     @Bean
     AuthenticationManager authenticationManager() {
@@ -46,8 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/", "/index.html", "/assets/**", "/math.ico", "/error",
-                                "/api/messages/**", "/api/exp/**", "/api/questions/**",
-                                "/api/users/**", "/api/login/**", "/api/token/refresh/**"
+                                "/api/login/**", "/api/token/refresh/**", "/api/demo/login/**"
                         ).permitAll()
                         .requestMatchers(GET, "/api/user/**")
                         .hasAnyAuthority("ROLE_STUDENT", "ROLE_TEACHER", "ROLE_PARENT", "ROLE_ADMIN")
@@ -57,7 +59,8 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .addFilter(authenticationFilter)
-                .addFilterBefore(new CustomAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CustomAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(temporaryPasswordFilter, CustomAuthorizationFilter.class);
 
         return http.build();
     }

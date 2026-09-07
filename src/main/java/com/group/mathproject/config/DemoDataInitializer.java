@@ -6,6 +6,7 @@ import com.group.mathproject.model.User;
 import com.group.mathproject.repository.QuestionRepository;
 import com.group.mathproject.repository.RoleRepository;
 import com.group.mathproject.service.UserService;
+import com.group.mathproject.learning.LearningSeedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -29,6 +30,7 @@ public class DemoDataInitializer implements ApplicationRunner {
     private final RoleRepository roleRepository;
     private final QuestionRepository questionRepository;
     private final UserService userService;
+    private final LearningSeedService learningSeedService;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -40,6 +42,7 @@ public class DemoDataInitializer implements ApplicationRunner {
         createUser("Admin", "Admin", "User", "ROLE_ADMIN");
         createUser("Student", "Student", "User", "ROLE_STUDENT");
         createUser("Teacher", "Teacher", "User", "ROLE_TEACHER");
+        createUser("Parent", "Parent", "User", "ROLE_PARENT");
 
         if (questionRepository.count() == 0) {
             SUBJECTS.forEach(subject -> {
@@ -50,6 +53,7 @@ public class DemoDataInitializer implements ApplicationRunner {
                 }
             });
         }
+        learningSeedService.seed();
     }
 
     private void createUser(String username, String firstName, String lastName, String role) {

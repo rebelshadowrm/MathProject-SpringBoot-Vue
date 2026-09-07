@@ -66,7 +66,7 @@ import { reactive, readonly, computed } from 'vue'
       state.userData.lastName = last_name
       state.userData.email = email
       state.userData.userName = username
-      roles?.forEach(role => state.userData.roles.push(role))
+      state.userData.roles = roles || []
     },
     updateIsLoggedIn: (isLoggedIn) => {
       state.isLoggedIn = isLoggedIn;

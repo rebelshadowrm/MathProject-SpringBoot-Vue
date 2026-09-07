@@ -1,9 +1,7 @@
 <template>
   <Header />
-<main>
-  <router-view/>
-</main>
-<Footer />
+  <main><router-view/></main>
+  <Footer />
 </template>
 <script>
   import Header from './components/Header.vue'
@@ -16,6 +14,3 @@ export default {
   },
 }
 </script>
-<style>
-
-</style>

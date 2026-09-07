@@ -1,30 +1,33 @@
 import {createRouter, createWebHistory} from "vue-router"
 import Home from '../views/Home.vue'
-import Profile from '../views/Profile.vue'
-import Test from '../views/Test.vue'
-import Flashcards from '../views/Flashcards.vue'
-import Drills from '../views/Drills.vue'
 import Login from '../views/Login.vue'
-import QuestionEditor from "../views/QuestionEditor.vue"
 import useUsers from '../composables/users'
 import Leaderboard from "../views/Leaderboard.vue";
+import Dashboard from '../views/Dashboard.vue'
+import Courses from '../views/Courses.vue'
+import Practice from '../views/Practice.vue'
+import Assignments from '../views/Assignments.vue'
+import ChangePassword from '../views/ChangePassword.vue'
 
 const routes = [
+    {
+        path: '/change-password',
+        name: 'ChangePassword',
+        component: ChangePassword
+    },
     {
         path: '/',
         name: 'Home',
         component: Home
     },
     {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile,
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
     },
     {
-        path: '/profile/:username',
-        name: 'UserProfile',
-        component: Profile,
-        props: true
+        path: '/profile',
+        redirect: '/dashboard'
     },
     {
         path: '/leaderboard',
@@ -33,23 +36,29 @@ const routes = [
     },
     {
         path: '/test',
-        name: 'Test',
-        component: Test
+        redirect: '/assignments'
+    },
+    {
+        path: '/assignments',
+        name: 'Assignments',
+        component: Assignments
     },
     {
         path: '/flashcards',
         name: 'Flashcards',
-        component: Flashcards
+        component: Practice,
+        props: {mode: 'FLASHCARD'}
     },
     {
         path: '/drills',
         name: 'Drills',
-        component: Drills
+        component: Practice,
+        props: {mode: 'DRILL'}
     },
     {
-        path: '/questions',
-        name: 'QuestionEditor',
-        component: QuestionEditor
+        path: '/courses',
+        name: 'Courses',
+        component: Courses
     },
     {
         path: '/login',
@@ -65,13 +74,19 @@ const router = createRouter({
 })
 
 router.beforeEach(async(to) => {
-    const {getIsLoggedIn} = useUsers()
+    const {getIsLoggedIn, loadUser} = useUsers()
+    if(localStorage.getItem('access_token') && !getIsLoggedIn().value) await loadUser()
     if (
         !getIsLoggedIn().value &&
         to.name !== 'Login' &&
         to.name !== 'Home'
     ) {
         return { name: 'Login'}
+    }
+
+    if (getIsLoggedIn().value && to.name !== 'ChangePassword') {
+        const response = await fetch('/api/account/status', {headers:{Authorization:`Bearer ${localStorage.getItem('access_token')}`}})
+        if (response.ok && (await response.json()).passwordChangeRequired) return {name:'ChangePassword'}
     }
 
 

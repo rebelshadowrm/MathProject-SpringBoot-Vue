@@ -1,166 +1,25 @@
 <template>
-  <div class="info">
-    <div class="hero-text">
-      <h1>math</h1>
-      <h2>It's bananas</h2>
+  <section class="hero page-shell">
+    <div class="hero-copy">
+      <p class="eyebrow">Grades 3–6 · Learn at your pace</p>
+      <h1>Small steps build <span>strong math.</span></h1>
+      <p class="lede">Practice a skill, understand the result, and see your progress grow. Math Practice connects learners, teachers, and families around one clear learning path.</p>
+      <div class="actions"><router-link class="button primary" to="/login">Explore the demo</router-link><a class="button secondary" href="#how">How it works</a></div>
     </div>
-    <div class="call-to-action">
-    <a href="#getStarted">start here</a>
+    <div class="hero-card glass-card" aria-label="Example learning progress">
+      <p class="eyebrow">Today’s path</p><h2>Grade 4 Math</h2>
+      <div class="progress"><span style="width:68%"></span></div><p>68% of current skills in progress</p>
+      <ul><li><span>✓</span> Multi-digit addition</li><li><span>→</span> Fraction equivalence</li><li><span>○</span> Angles and shapes</li></ul>
     </div>
-  </div>
-  <section>
-    <div>
-      <h3 id="getStarted" class="about">More about Banana.math</h3>
-      <p>Started as a small indy project, we pride ourselves on our wonderful user experience.</p>
-      <p>Our UI is completely custom made from the ground up, to bring you the best visual aesthetic combined with lightning fast responsiveness of Vue.js.</p>
-    </div>
-    <div>
-      <h3>Subjects we offer </h3>
-      <p>Mathematics</p>
-      <ul>
-        <li>Addition</li>
-        <li>Subtraction</li>
-        <li>Multiplication</li>
-        <li>Division</li>
-      </ul>
-    </div>
-    <div class="login">
-      <router-link to="/login">Login Here</router-link>
-    </div>
-    <div>
-      <h3>To get your own account</h3>
-      <h4>Leave a message with an admin</h4>
-      <h4 class="warning">Note, messaging service isn't setup properly yet</h4>
-      <hr>
-      <MessageComponent/>
-    </div>
+  </section>
+  <section id="how" class="page-shell section-block">
+    <p class="eyebrow">A complete learning loop</p><h2>Practice with purpose</h2>
+    <div class="feature-grid"><article class="glass-card"><b>01</b><h3>Choose a path</h3><p>Follow focused courses from foundational arithmetic through early algebra.</p></article><article class="glass-card"><b>02</b><h3>Learn by doing</h3><p>Use examples and hints, then build confidence with drills and flashcards.</p></article><article class="glass-card"><b>03</b><h3>See the growth</h3><p>Mastery, assignments, and classroom insight keep everyone moving together.</p></article></div>
   </section>
 </template>
 <script>
-import MessageComponent from "../components/messages/MessageComponent";
-export default {
-  name: "Home",
-  components: {
-    MessageComponent
-  },
-  created(){
-    document.title = "Home"
-  }
-}
+export default { name: 'Home', created(){ document.title='Math Practice' } }
 </script>
 <style scoped>
-.info {
-  display: grid;
-  gap: 5rem;
-  padding: 35vh 2rem 5vh 2rem;
-  grid-auto-flow: row;
-  grid-auto-rows: max-content;
-  width: 100%;
-  min-height: 100vh;
-  margin-top: -7vh;
-  background: linear-gradient(to bottom,
-                            rgba(0,0,0, .5),
-                            rgba(0,0,0, .1) 50%,
-                            rgba(255,255,255, .75)),
-                            url("../assets/pinkbananas.jpg");
-  background-size: cover;
-  background-position: top;
-  background-blend-mode:  darken;
-}
-.hero-text,
-.call-to-action {
-  place-self: center;
-}
-h1,
-h2 {
-  color: hsl(var(--clr-secondary-400) / .5);
-  -webkit-text-stroke: 3px hsl(var(--clr-primary-600));
-  font-weight: 900;
-  font-family: var(--ff-serif);
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-h1 {
-  font-size: var(--txt-xxl-fluid);
-  letter-spacing: 1rem;
-  transform: translateX(-200%);
-  animation: slide 500ms ease-out forwards;
-}
-h2 {
-  font-size: var(--txt-xlrg-fluid);
-  margin-left: 1rem;
-  color: hsl(var(--clr-accent-200) / .75);
-  transform: translateX(-200vw);
-  animation: slide 500ms forwards ease-out 500ms;
-}
-.call-to-action a {
-  display: block;
-  text-decoration: none;
-  padding: .45em .9em;
-  font-size: var(--txt-lrg);
-  background: hsl(var(--clr-primary-600) / .9);
-  color: hsl(var(--clr-secondary-200));
-  font-weight: 700;
-  font-family: var(--ff-mono);
-  letter-spacing: 1px;
-  border-radius: var(--radius);
-  text-transform: capitalize;
-  border: 2px solid hsl(var(--clr-accent-200) / .8);
-  cursor: pointer;
-  transform: translateX(-200vw);
-  animation: slide 500ms forwards ease-out 1000ms;
-  transition: filter 350ms ease, box-shadow 200ms ease;
-}
-.call-to-action a:hover,
-.call-to-action a:focus {
-  filter: brightness(1.3);
-  box-shadow: 2px 2px 4px 0 hsl(var(--clr-white-200) / .5);
-  transition: filter 350ms ease, box-shadow 450ms ease;
-}
-section {
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 3rem 2rem;
-}
-.login {
-  padding: 2em 1em;
-}
-.login a {
-  color: var(--clr-text);
-  text-decoration: none;
-  font-weight: 500;
-  border: 1px solid hsl(var(--clr-accent-400) / .7);
-  background: hsl(var(--clr-primary-400) / .1);
-  backdrop-filter: blur(7px);
-  padding: 1em 2em;
-  border-radius: var(--radius);
-  transition: background 300ms ease-out;
-}
-.login a:hover {
-  background: hsl(var(--clr-white-200) / .1);
-}
-.warning {
-  color: red;
-  font-size: var(--txt-med);
-}
-h3 {
-  font-size: var(--txt-lrg);
-  margin: 1rem 0;
-}
-section p {
-  font-size: var(--txt-med);
-}
-.about {
-  font-size: var(--txt-lrg-fluid);
-  padding-top: 1rem;
-}
-@keyframes slide {
-  0% {
-    transform: translateX(-200vw);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
+.hero{min-height:calc(100vh - 4.5rem);display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:4rem;padding-block:6rem}.hero h1{font:800 clamp(3.4rem,8vw,7rem)/.95 var(--ff-serif);max-width:10ch}.hero h1 span{color:hsl(var(--clr-accent-200))}.lede{font-size:1.2rem;margin:1.5rem 0 2rem}.actions{display:flex;gap:1rem;flex-wrap:wrap}.hero-card{padding:2rem;transform:rotate(1.5deg)}.hero-card h2{font-size:2rem}.hero-card ul{list-style:none;padding:0;margin:2rem 0 0;display:grid;gap:1rem}.hero-card li{display:flex;gap:.75rem}.hero-card li span{color:hsl(var(--clr-accent-200));font-weight:800}.progress{height:.65rem;background:hsl(var(--clr-white-200)/.1);border-radius:1rem;margin:1.25rem 0 .5rem;overflow:hidden}.progress span{height:100%;display:block;background:hsl(var(--clr-accent-400))}.section-block{padding-block:5rem}.section-block>h2{font:700 clamp(2.5rem,5vw,4rem) var(--ff-serif);margin-bottom:2rem}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}.feature-grid article{padding:1.75rem}.feature-grid b{color:hsl(var(--clr-secondary-200));font-family:var(--ff-mono)}.feature-grid h3{font-size:1.35rem;margin:.8rem 0}.feature-grid p{color:hsl(var(--clr-white-600))}@media(max-width:48rem){.hero{grid-template-columns:1fr;padding-block:4rem;gap:2rem}.feature-grid{grid-template-columns:1fr}}
 </style>

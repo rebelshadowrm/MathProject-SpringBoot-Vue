@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,24 +36,28 @@ public class UserController {
     private final JwtService jwtService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>>getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<UserView>>getUsers() {
+        return ResponseEntity.ok().body(userService.getUsers().stream().map(UserView::from).toList());
     }
 
     @GetMapping("/user/{username}")
-    public ResponseEntity<User> getUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(userService.getUser(username));
+    @PreAuthorize("#username == authentication.name or hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UserView> getUser(@PathVariable("username") String username) {
+        User user = userService.getUser(username);
+        return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(UserView.from(user));
     }
 
     @PostMapping("/user/save")
-    public ResponseEntity<User>saveUser(@RequestBody User user) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UserView>saveUser(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/user/save")
                 .toUriString());
         User userExists = userService.getUser(user.getUsername());
         if(userExists == null) {
-            return ResponseEntity.created(uri).body(userService.saveUser(user));
+            return ResponseEntity.created(uri).body(UserView.from(userService.saveUser(user)));
         }
         return ResponseEntity.unprocessableEntity().build();
     }
@@ -108,6 +113,12 @@ public class UserController {
 
     }
 
+}
+
+record UserView(Integer id, String username, String email, String first_name, String last_name, List<Role> roles) {
+    static UserView from(User user) {
+        return new UserView(user.getId(), user.getUsername(), user.getEmail(), user.getFirst_name(), user.getLast_name(), List.copyOf(user.getRoles()));
+    }
 }
 
 @Data

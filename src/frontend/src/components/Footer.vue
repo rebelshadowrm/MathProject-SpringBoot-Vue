@@ -1,6 +1,6 @@
 <template>
 <footer>
-  <p>Math Group Project &copy; 2022</p>
+  <p><strong>Math Practice</strong> · A modern learning-platform portfolio project.</p>
 </footer>
 </template>
 
@@ -12,6 +12,9 @@ export default {
 
 <style scoped>
 footer {
-  padding: 1rem 2rem;
+  padding: 2rem;
+  text-align: center;
+  color: hsl(var(--clr-white-600));
+  border-top: 1px solid hsl(var(--clr-white-200) / .1);
 }
 </style>
