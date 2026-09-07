@@ -1,24 +1,12 @@
-# frontend
+# Banana.math frontend
 
-## Project setup
-```
+Vue 3 single-page application built with Vite.
+
+```bash
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
+npm run dev
+npm run lint
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+The Vite development server runs on port 3000 and proxies `/api` to Spring Boot on port 8080. Maven runs `npm ci` and copies the production bundle into the Spring Boot executable JAR.

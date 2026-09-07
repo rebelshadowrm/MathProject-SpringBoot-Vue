@@ -61,6 +61,8 @@ pids
 
 .DS_Store
 node_modules/
+src/frontend/node/
+data/
 
 # local env files
 .env.local

@@ -7,7 +7,6 @@ import com.group.mathproject.model.QuestionForm;
 import com.group.mathproject.model.UserQuestion;
 import com.group.mathproject.service.QuestionService;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -101,7 +100,7 @@ public class QuestionsController {
 
     @PutMapping("/questions/{id}")
     public Question updateQuestion(@PathVariable("id") int id,
-                               @RequestBody @NotNull Question newQuestion) {
+                               @RequestBody Question newQuestion) {
         Question qu = questionService.findById(id)
                 .orElseThrow( () -> new NotFoundException(
                         "Question with id of " + id + " not found!"

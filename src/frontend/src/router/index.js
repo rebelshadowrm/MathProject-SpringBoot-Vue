@@ -4,10 +4,10 @@ import Profile from '../views/Profile.vue'
 import Test from '../views/Test.vue'
 import Flashcards from '../views/Flashcards.vue'
 import Drills from '../views/Drills.vue'
-import Login from '../views/Login'
-import QuestionEditor from "../views/QuestionEditor"
+import Login from '../views/Login.vue'
+import QuestionEditor from "../views/QuestionEditor.vue"
 import useUsers from '../composables/users'
-import Leaderboard from "../views/Leaderboard";
+import Leaderboard from "../views/Leaderboard.vue";
 
 const routes = [
     {
@@ -60,7 +60,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes
 })
 

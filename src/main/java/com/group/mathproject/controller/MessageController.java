@@ -4,7 +4,6 @@ import com.group.mathproject.model.Message;
 import com.group.mathproject.exception.NotFoundException;
 import com.group.mathproject.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -43,7 +42,7 @@ public class MessageController {
 
     @PutMapping(value="/messages/{id}")
     public Message updateMessage(@PathVariable("id") Integer id,
-                                 @RequestBody @NotNull Message newMsg) {
+                                 @RequestBody Message newMsg) {
         Message msg = messageService.findById(id)
                                     .orElseThrow(()->new NotFoundException(
                                             "Message with " + id + " is Not Found!"

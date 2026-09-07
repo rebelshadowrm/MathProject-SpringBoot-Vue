@@ -131,7 +131,7 @@ import { reactive, readonly, computed } from 'vue'
     decodeJWT: (token) => {
       try {
         return JSON.parse(atob(token.split('.')[1]))
-      } catch (e) {
+      } catch {
         return null
       }
     },
