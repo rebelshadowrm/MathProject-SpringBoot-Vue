@@ -1,6 +1,17 @@
 # Heroku portfolio conversion runbook
 
-This procedure is prepared, not executed. Do not reset PostgreSQL, scale the site to zero, enable maintenance, purchase a service, or destroy an add-on without explicit owner approval. No action here targets Softball/Diamond Connected or any other application.
+The initial conversion was executed on 2026-10-17 after the owner instructed “execute 1-4.” See the execution record below. For future operations, do not reset PostgreSQL, scale the site to zero, enable maintenance, purchase a service, or destroy an add-on without explicit owner approval. No action here targets Softball/Diamond Connected or any other application.
+
+## Completed conversion: 2026-10-17
+
+- Saved pre-conversion configuration, buildpack/release metadata and a verified database backup in the access-restricted local directory `C:/Users/rebel/banana-math-backups/2026-10-17-h2/`, outside the repository. The archive is `banana-math-b002.dump` (60,965 bytes), captured as Heroku backup `b002` at 18:47 UTC. SHA256: `D4C4925CCF3090690F1DBFF1BF855F69D421AD87954128103AE5A3F14D1C77BB`.
+- Verified the custom archive with PostgreSQL 18 `pg_restore --list`, then restored it successfully with `--exit-on-error --no-owner --no-acl` into an isolated, network-disabled temporary local PostgreSQL container. Confirmed four users, four courses, one class, one assessment and successful Flyway V1/V2 history. Removed only that temporary verification container afterward; the backup remains available.
+- Deployed tested commit `4bb3b06a2b9055abcc3b4518ad8051dc78d31a8a` as release v14. Release v15 enabled `SPRING_PROFILES_ACTIVE=portfolio-demo`, retaining the existing strong JWT secret and demo flags. Startup logs confirmed embedded `jdbc:h2:mem:...`, both migrations and successful application startup.
+- Passed live authenticated acceptance for Student, Teacher, Parent and Administrator: courses, both leaderboard scopes, password and one-click logins, scored drills/flashcards, seeded assessment, progress visibility, parent mutation denial, class and learner creation, required learner password replacement, announcement, generated assignment publication/submission, parent linking and administrator user/role management. Browser checks confirmed all four dashboards and the temporary-progress notice. A Heroku restart restored zero XP, four original accounts, one original class and an uncompleted assessment.
+- Rechecked exact add-on identity/ownership and all attachments immediately before removal: only `banana-math-modern::DATABASE` was attached. Under the owner's authorization, destroyed `postgresql-cubed-85210` (`ab7dc2e7-8ecd-4253-a2d2-44750d13a1b2`). Release v16 removed its attachment/configuration. Heroku's app add-on list is empty and `DATABASE_URL` is absent; no explicit datasource/Flyway overrides remain.
+- Repeated the complete live API workflow acceptance after deletion, then restarted Banana Math again and confirmed the initial clean demo. The site remains public on one Eco web dyno. No other application, database or service was changed, and no new service was purchased.
+
+The Essential 0 database add-on ($5/month) is removed. Previously accrued charges and separate web hosting charges can still appear on the bill. Keep the downloaded backup and private configuration export secure; PostgreSQL restoration would require separate approval for a replacement service.
 
 ## Read-only inspection: 2026-10-17
 
@@ -20,7 +31,7 @@ All visitors share the demo accounts. Visitor progress and edits are temporary, 
 
 Before changing the live app, run `./mvnw verify` on Java 21 or newer and `npm run lint` in `src/frontend`. Review and record the exact tested Git SHA. Keep `JWT_SECRET` strong and private. Do not override `app.demo-*`, Flyway enablement, migration locations, or `ddl-auto=validate`.
 
-See [local validation evidence](PORTFOLIO-VALIDATION.md) for completed automated, browser and real-process restart checks. Hosted acceptance remains pending.
+See [validation evidence](PORTFOLIO-VALIDATION.md) for completed local and hosted acceptance.
 
 ## Backup and recovery preparation
 
@@ -64,7 +75,7 @@ Only after that approval, the operator runs:
 heroku addons:destroy postgresql-cubed-85210 -a banana-math-modern --confirm banana-math-modern
 ```
 
-This destroys the database; it is not a detach or reset. It can trigger a config release/restart. Then confirm `heroku addons -a banana-math-modern` no longer lists it, inspect the billing dashboard for cessation of future charges (already accrued charges can remain), repeat four-role login and Student drill/assessment smoke tests, and restart once more to verify independence. Remove only stale, explicitly set database config keys on Banana Math if any remain; never print their values. Keep the strong JWT secret and demo profile. No add-on was removed by this implementation task.
+This destroys the database; it is not a detach or reset. It can trigger a config release/restart. Then confirm `heroku addons -a banana-math-modern` no longer lists it, inspect the billing dashboard for cessation of future charges (already accrued charges can remain), repeat four-role login and Student drill/assessment smoke tests, and restart once more to verify independence. Remove only stale, explicitly set database config keys on Banana Math if any remain; never print their values. Keep the strong JWT secret and demo profile. The initial conversion completed this removal as recorded above; do not rerun it.
 
 ## Rollback and future restoration
 
