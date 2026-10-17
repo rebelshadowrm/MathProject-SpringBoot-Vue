@@ -6,7 +6,7 @@ A portfolio-focused grade 3–6 learning platform built with Vue and Spring Boot
 
 - Java 21 LTS and Spring Boot 4.1
 - Spring Security 7 with JWT authentication
-- Flyway-managed PostgreSQL with Hibernate schema validation and H2 for local development
+- Flyway migrations and Hibernate schema validation with embedded H2 for the portfolio demo; PostgreSQL support retained
 - Vue 3.5, Vue Router 5, Vite 8, Node.js 22, and ESLint 10
 - Maven 3.9 wrapper with a reproducible frontend build
 
@@ -21,12 +21,12 @@ Build and test the complete application:
 Run the packaged application at `http://localhost:8080`:
 
 ```bash
-java -jar target/mathproject-0.0.1-SNAPSHOT.jar
+java -jar target/mathproject-0.0.1-SNAPSHOT.jar --spring.profiles.active=portfolio-demo
 ```
 
 For frontend hot reload, run `npm install && npm run dev` from `src/frontend` while the Spring application is running.
 
-To load the deterministic course map, demo classroom, announcement, and published test, set `DEMO_DATA=true`. Set `DEMO_LOGIN=true` to expose the one-click demo-role login API. All demo accounts use the password `password`:
+The `portfolio-demo` profile creates a fresh in-memory H2 database, runs the shared Flyway migrations, validates the schema, and seeds the course map, demo classroom, parent link, announcement, and published assessment. Demo login is enabled. It requires no database files or external database, even when `SPRING_DATASOURCE_*` variables are present. All demo accounts use the password `password`:
 
 - `Admin`
 - `Student`
@@ -35,12 +35,17 @@ To load the deterministic course map, demo classroom, announcement, and publishe
 
 Teacher-created learners receive a one-time temporary password and must replace it with a password of at least 10 characters before using the application.
 
+Visitor progress, accounts, classroom edits, and assessments are intentionally temporary. Every process restart restores the seeded demo. All visitors share the demo accounts; use fictional information only. Run a single web process: each process has its own independent database. An Eco dyno may sleep and wake with a fresh demo.
+
+Without this profile, the historical configuration remains available: local development uses file-backed H2 under `data/`, or `SPRING_DATASOURCE_*` selects PostgreSQL. `DEMO_DATA=true` and `DEMO_LOGIN=true` opt into seeding and demo login in that configuration.
+
 ## Configuration
 
 Production secrets and services are configured through environment variables:
 
 | Variable | Purpose |
 | --- | --- |
+| `SPRING_PROFILES_ACTIVE` | Set to `portfolio-demo` for disposable embedded H2 with seeded demo logins |
 | `JWT_SECRET` | Strong random JWT signing secret; required in production |
 | `SPRING_DATASOURCE_URL` | JDBC database URL; Heroku supplies this for attached Postgres |
 | `SPRING_DATASOURCE_USERNAME` | Database username |
@@ -49,19 +54,18 @@ Production secrets and services are configured through environment variables:
 | `DEMO_LOGIN` | Enable one-click demo authentication; defaults to `DEMO_DATA` |
 | `PORT` | HTTP port; assigned automatically by Heroku |
 
-Without database variables, local development uses a file-backed H2 database under `data/`.
+Keep a strong `JWT_SECRET` on Heroku. Remove any separate Flyway connection overrides (`SPRING_FLYWAY_URL`, `SPRING_FLYWAY_USER`, `SPRING_FLYWAY_PASSWORD`, `SPRING_FLYWAY_DRIVER_CLASS_NAME`) before selecting the demo profile; these are rejected to prevent a separate migration connection to an external database. Do not override the profile's demo-data, demo-login, Flyway, or Hibernate settings.
 
 ## Heroku deployment
 
-The repository includes `system.properties` for Java 21 and a `Procfile`. After creating an app:
+The repository includes `system.properties` for Java 21 and a `Procfile`. For a new, empty app (no database add-on required):
 
 ```bash
-heroku addons:create heroku-postgresql:essential-0 -a YOUR_APP
-heroku config:set JWT_SECRET=YOUR_LONG_RANDOM_VALUE DEMO_DATA=true -a YOUR_APP
-git push heroku modernize/2026-stack:main
+heroku config:set SPRING_PROFILES_ACTIVE=portfolio-demo JWT_SECRET=YOUR_LONG_RANDOM_VALUE -a YOUR_APP
+git push heroku HEAD:main
 ```
 
-Heroku's Java buildpack exposes the attached database through Spring's `SPRING_DATASOURCE_*` variables. Flyway runs migrations during application startup; Hibernate then validates the resulting schema. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the backup, maintenance, deploy, smoke-test, and rollback sequence.
+For the existing `banana-math-modern` site, follow [the conversion runbook](docs/DEPLOYMENT.md), including backup, deployment, smoke testing, and owner approval before database removal. The database charge continues until the add-on is destroyed; switching profiles alone does not stop billing. Web hosting charges remain separate. [Historical PostgreSQL migration and restoration instructions](docs/POSTGRESQL-HISTORY.md) are preserved.
 
 ## Project history
 
